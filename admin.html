@@ -7,30 +7,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; color: #f3f4f6; min-height: 100vh; }
-        nav { background: #1e3a8a; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2563eb; }
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
-        .admin-box { background: #1e293b; border: 1px solid #3b82f6; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .admin-title { font-size: 14px; font-weight: 700; color: #93c5fd; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #2563eb; padding-bottom: 8px; }
+        body { background: #020617; color: #f8fafc; min-height: 100vh; }
+        nav { background: #090d16; color: #fff; padding: 15px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e3a8a; }
+        .container { max-width: 1000px; margin: 24px auto; padding: 0 15px; }
+        .admin-box { background: #090d16; border: 1px solid #1e3a8a; border-radius: 12px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .admin-title { font-size: 13px; font-weight: 700; color: #93c5fd; text-transform: uppercase; margin-bottom: 16px; border-bottom: 2px solid #1d4ed8; padding-bottom: 8px; letter-spacing: 0.5px; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-        th, td { padding: 12px; border-bottom: 1px solid #334155; }
-        th { background: #0f172a; color: #93c5fd; text-transform: uppercase; font-size: 11px; }
-        .btn { background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
+        th, td { padding: 12px; border-bottom: 1px solid #1e293b; }
+        th { background: #020617; color: #93c5fd; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        .btn { background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
         .btn:hover { background: #1d4ed8; }
         .form-row { margin-bottom: 12px; }
-        .form-row label { display: block; font-size: 11px; font-weight: bold; color: #93c5fd; margin-bottom: 4px; text-transform: uppercase; }
-        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #3b82f6; color: #fff; padding: 8px; border-radius: 6px; font-size: 12px; outline: none; }
+        .form-row label { display: block; font-size: 11px; font-weight: bold; color: #93c5fd; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #020617; border: 1px solid #1d4ed8; color: #fff; padding: 9px 10px; border-radius: 8px; font-size: 12px; outline: none; }
     </style>
 </head>
 <body>
 
     <nav>
         <div>
-            <div style="font-weight:800; font-size:15px; color:#93c5fd;">TOKO UCEN JAYA</div>
-            <div style="font-size:10px; color:#93c5fd;">Admin Panel</div>
+            <div style="font-weight:800; font-size:15px; color:#93c5fd; letter-spacing:0.5px;">TOKO UCEN JAYA</div>
+            <div style="font-size:10px; color:#64748b;">Admin Panel - Media Produk</div>
         </div>
         <div>
-            <a href="index.html" class="btn" style="background:#dc2626;">Kembali ke Portal</a>
+            <a href="index.html" class="btn" style="background:#1e293b; border:1px solid #334155;">Logout</a>
         </div>
     </nav>
 
@@ -45,39 +45,44 @@
         <div id="tab-dash" class="admin-box">
             <div class="admin-title">Dashboard Statistik Pendapatan</div>
             <div style="display:flex; gap:15px; margin-bottom:20px;">
-                <div style="flex:1; background:#0f172a; padding:15px; border-radius:6px; border-left:4px solid #3b82f6; border: 1px solid #3b82f6;">
+                <div style="flex:1; background:#020617; padding:16px; border-radius:8px; border-left:4px solid #3b82f6; border: 1px solid #1e3a8a;">
                     <div style="font-size:11px; color:#93c5fd; font-weight:bold;">TOTAL PENDAPATAN</div>
-                    <div id="stat-rev" style="font-size:20px; font-weight:bold; color:#60a5fa;">Rp 0</div>
+                    <div id="stat-rev" style="font-size:22px; font-weight:bold; color:#60a5fa; margin-top:4px;">Rp 0</div>
                 </div>
             </div>
-            <div style="height:200px;"><canvas id="chartAdmin"></canvas></div>
+            <div style="height:210px;"><canvas id="chartAdmin"></canvas></div>
         </div>
 
         <div id="tab-prod" class="admin-box" style="display:none;">
-            <div class="admin-title">Kelola Barang & Stok</div>
+            <div class="admin-title">Kelola Barang & Stok Media</div>
             <table>
-                <thead><tr><th>Foto</th><th>Nama Barang</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+                <thead><tr><th>Media</th><th>Nama Barang</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
                 <tbody id="table-prod-body"></tbody>
             </table>
         </div>
 
         <div id="tab-ord" class="admin-box" style="display:none;">
-            <div class="admin-title">Daftar Pesanan Masuk</div>
+            <div class="admin-title">Daftar Pesanan Masuk & Status Pengiriman</div>
             <table>
-                <thead><tr><th>ID</th><th>Pembeli</th><th>Item</th><th>Total</th><th>Status</th></tr></thead>
+                <thead><tr><th>ID</th><th>Pembeli</th><th>Item</th><th>Total</th><th>Ubah Status</th></tr></thead>
                 <tbody id="table-ord-body"></tbody>
             </table>
         </div>
 
         <div id="tab-add" class="admin-box" style="display:none; max-width:450px;">
-            <div class="admin-title">Tambah Produk Baru</div>
+            <div class="admin-title">Tambah Produk (Foto/Video)</div>
             <form onsubmit="tambahProdukBaru(event)">
                 <div class="form-row"><label>Nama Barang</label><input type="text" id="p-name" required></div>
                 <div class="form-row"><label>Harga (Rp)</label><input type="number" id="p-price" required></div>
-                <div class="form-row"><label>Deskripsi</label><textarea id="p-desc" style="height:50px; resize:none;" required></textarea></div>
-                <div class="form-row"><label>URL Foto</label><input type="text" id="p-img" placeholder="https://..." required></div>
+                <div class="form-row"><label>Deskripsi</label><textarea id="p-desc" style="height:55px; resize:none;" required></textarea></div>
+                
+                <div class="form-row">
+                    <label>Pilih File (Foto / Video)</label>
+                    <input type="file" id="p-file" accept="image/*,video/*" required style="padding:6px; cursor:pointer;">
+                </div>
+
                 <div class="form-row"><label>Stok</label><input type="number" id="p-stock" required></div>
-                <button type="submit" class="btn" style="width:100%;">Simpan Produk</button>
+                <button type="submit" class="btn" style="width:100%; margin-top:4px;">Simpan Produk</button>
             </form>
         </div>
     </div>
@@ -116,7 +121,7 @@
                 type: 'bar',
                 data: {
                     labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
-                    datasets: [{ label: 'Penjualan', data: [12, 19, 3, 5, 2, 20, 15], backgroundColor: '#3b82f6' }]
+                    datasets: [{ label: 'Penjualan', data: [12, 19, 3, 5, 2, 20, 15], backgroundColor: '#3b82f6', borderRadius: 4 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -127,14 +132,21 @@
             let tb = document.getElementById('table-prod-body');
             tb.innerHTML = "";
             products.forEach((p, idx) => {
-                let img = p.imgs?.[0] || p.img || '';
+                let mediaElement = "";
+                let mediaSrc = p.media || p.imgs?.[0] || p.img || '';
+                if(p.mediaType === 'video') {
+                    mediaElement = `<video src="${mediaSrc}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #1e3a8a;" muted></video>`;
+                } else {
+                    mediaElement = `<img src="${mediaSrc}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #1e3a8a;">`;
+                }
+
                 tb.innerHTML += `
                     <tr>
-                        <td><img src="${img}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;"></td>
+                        <td>${mediaElement}</td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td><b>${p.stock}</b></td>
-                        <td><button onclick="hapusProd(${idx})" style="background:#dc2626; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                        <td><button onclick="hapusProd(${idx})" style="background:#b91c1c; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:11px;">Hapus</button></td>
                     </tr>
                 `;
             });
@@ -151,8 +163,8 @@
             let orders = getOrders();
             let tb = document.getElementById('table-ord-body');
             tb.innerHTML = "";
-            if(orders.length === 0) { tb.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Belum ada pesanan</td></tr>"; return; }
-            orders.forEach(o => {
+            if(orders.length === 0) { tb.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#64748b;'>Belum ada pesanan</td></tr>"; return; }
+            orders.forEach((o, idx) => {
                 let items = o.items.map(i => i.name).join(', ');
                 tb.innerHTML += `
                     <tr>
@@ -160,31 +172,59 @@
                         <td>${o.buyer.name}</td>
                         <td>${items}</td>
                         <td><b>Rp ${o.total.toLocaleString('id-ID')}</b></td>
-                        <td>${o.status}</td>
+                        <td>
+                            <select onchange="ubahStatus(${idx}, this.value)" style="background:#020617; border:1px solid #1e3a8a; color:#fff; padding:5px; border-radius:6px; font-size:11px;">
+                                <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Dikirim" ${o.status === 'Dikirim' ? 'selected' : ''}>Sedang Dikirim</option>
+                                <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                            </select>
+                        </td>
                     </tr>
                 `;
             });
         }
 
+        function ubahStatus(idx, statusBaru) {
+            let orders = getOrders();
+            orders[idx].status = statusBaru;
+            localStorage.setItem('ucen_orders', JSON.stringify(orders));
+            loadStats();
+            alert("Status pesanan berhasil diubah menjadi: " + statusBaru);
+        }
+
         function tambahProdukBaru(e) {
             e.preventDefault();
-            let products = getProducts();
-            products.push({
-                id: Date.now(),
-                name: document.getElementById('p-name').value,
-                price: parseInt(document.getElementById('p-price').value),
-                desc: document.getElementById('p-desc').value,
-                imgs: [document.getElementById('p-img').value],
-                stock: parseInt(document.getElementById('p-stock').value)
-            });
-            localStorage.setItem('ucen_products', JSON.stringify(products));
-            alert("Produk berhasil ditambahkan!");
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-price').value = '';
-            document.getElementById('p-desc').value = '';
-            document.getElementById('p-img').value = '';
-            document.getElementById('p-stock').value = '';
-            pilihTab('prod');
+            let fileInput = document.getElementById('p-file');
+            let file = fileInput.files[0];
+            if (!file) return alert("Pilih file terlebih dahulu!");
+
+            let reader = new FileReader();
+            reader.onload = function(event) {
+                let base64Data = event.target.result;
+                let mediaType = file.type.startsWith('video') ? 'video' : 'image';
+
+                let products = getProducts();
+                products.push({
+                    id: Date.now(),
+                    name: document.getElementById('p-name').value,
+                    price: parseInt(document.getElementById('p-price').value),
+                    desc: document.getElementById('p-desc').value,
+                    media: base64Data,
+                    mediaType: mediaType,
+                    stock: parseInt(document.getElementById('p-stock').value)
+                });
+                
+                localStorage.setItem('ucen_products', JSON.stringify(products));
+                alert("Produk & Media berhasil ditambahkan!");
+                
+                document.getElementById('p-name').value = '';
+                document.getElementById('p-price').value = '';
+                document.getElementById('p-desc').value = '';
+                fileInput.value = '';
+                document.getElementById('p-stock').value = '';
+                pilihTab('prod');
+            };
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
