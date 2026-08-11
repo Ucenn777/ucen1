@@ -30,7 +30,7 @@
             <div style="font-size:10px; color:#93c5fd;">Admin Panel</div>
         </div>
         <div>
-            <a href="index.html" class="btn" style="background:#dc2626;">Keluar (Logout)</a>
+            <a href="index.html" class="btn" style="background:#dc2626;">Kembali ke Portal</a>
         </div>
     </nav>
 
@@ -100,6 +100,7 @@
             document.getElementById('tab-'+tab).style.display = 'block';
             if(tab === 'prod') renderProdTable();
             if(tab === 'ord') renderOrdTable();
+            if(tab === 'dash') renderChart();
         }
 
         function loadStats() {
@@ -109,6 +110,7 @@
         }
 
         function renderChart() {
+            loadStats();
             const ctx = document.getElementById('chartAdmin').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
