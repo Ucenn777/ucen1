@@ -3,223 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Toko - TOKO UCEN JAYA</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Customer - TOKO UCEN JAYA</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: #0b0f19; color: #f3f4f6; min-height: 100vh; }
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-
-        /* NAVBAR GLOBAL */
-        nav { background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .brand-logo { font-size: 14px; font-weight: 800; color: #818cf8; letter-spacing: 0.5px; cursor: pointer; text-transform: uppercase; }
-        .nav-actions { display: flex; gap: 8px; align-items: center; }
-        .btn-custom { background: #334155; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; display:inline-block; }
-        .btn-custom:hover { background: #475569; }
-
+        body { background: #0f172a; color: #f3f4f6; min-height: 100vh; }
+        nav { background: #1e3a8a; border-bottom: 1px solid #2563eb; padding: 12px 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand-logo { font-size: 14px; font-weight: 800; color: #93c5fd; text-transform: uppercase; cursor: pointer; text-decoration: none; }
+        .btn-custom { background: #2563eb; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
+        .btn-custom:hover { background: #1d4ed8; }
         .container { max-width: 1100px; margin: 25px auto; padding: 0 20px; }
-
-        /* AREA CUSTOMER */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card { background: #1e293b; border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
         .media-box { width: 100%; height: 140px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
         .media-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* AREA ADMIN */
-        .admin-nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
-        .admin-panel-box { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .admin-title { font-size: 12px; font-weight: 700; color: #818cf8; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
-        th, td { padding: 10px; border-bottom: 1px solid #334155; }
-        th { background: #0f172a; color: #94a3b8; text-transform: uppercase; font-size: 10px; }
         
-        .form-row { margin-bottom: 12px; text-align: left; }
-        .form-row label { display: block; font-size: 10px; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
-        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #475569; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
-        .btn-submit { background: #6366f1; color: #fff; border: none; padding: 9px; width: 100%; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-submit:hover { background: #4f46e5; }
-
-        /* MODAL */
+        /* Modal */
         .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-card { background: #1e293b; border: 1px solid #334155; width: 100%; max-width: 400px; border-radius: 10px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+        .modal-card { background: #1e293b; border: 1px solid #3b82f6; width: 100%; max-width: 400px; border-radius: 10px; padding: 20px; }
+        .form-row { margin-bottom: 10px; text-align: left; }
+        .form-row label { display: block; font-size: 10px; font-weight: bold; color: #93c5fd; text-transform: uppercase; margin-bottom: 3px; }
+        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #3b82f6; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
+        .btn-submit { background: #2563eb; color: #fff; border: none; padding: 9px; width: 100%; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="view-customer" class="view-section">
-        <nav>
-            <div class="brand-logo" onclick="location.href='index.html'">Ucen Jaya • Customer</div>
-            <div class="nav-actions">
-                <button class="btn-custom" onclick="bukaKeranjang()">🛒 Tas (<span id="count-badge">0</span>)</button>
-                <button class="btn-custom" onclick="switchMode('admin')" style="background:#4f46e5;">Mode Admin</button>
-                <a href="index.html" class="btn-custom" style="background:#ef4444;">Keluar</a>
-            </div>
-        </nav>
-        <div class="container">
-            <div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:15px; border-left:3px solid #818cf8; padding-left:8px;">Katalog Produk Unggulan</div>
-            <div class="product-grid" id="customer-grid"></div>
+    <nav>
+        <a href="index.html" class="brand-logo">Ucen Jaya • Customer</a>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn-custom" onclick="bukaKeranjang()">🛒 Tas (<span id="count-badge">0</span>)</button>
+            <a href="index.html" class="btn-custom" style="background:#dc2626;">Kembali</a>
         </div>
-    </div>
+    </nav>
 
-    <div id="view-admin" class="view-section">
-        <nav>
-            <div class="brand-logo" onclick="location.href='index.html'">Ucen Jaya • Admin Panel</div>
-            <div class="nav-actions">
-                <button class="btn-custom" onclick="switchMode('customer')" style="background:#059669;">Mode Customer</button>
-                <a href="index.html" class="btn-custom" style="background:#ef4444;">Keluar</a>
-            </div>
-        </nav>
-        <div class="container">
-            <div class="admin-nav-tabs">
-                <button class="btn-custom" onclick="pilihTabAdmin('dash', event)">📊 Statistik</button>
-                <button class="btn-custom" onclick="pilihTabAdmin('prod', event)">📦 Kelola Stok</button>
-                <button class="btn-custom" onclick="pilihTabAdmin('ord', event)">🛍️ Daftar Pesanan</button>
-                <button class="btn-custom" onclick="pilihTabAdmin('add', event)">➕ Tambah Produk</button>
-            </div>
-
-            <div id="adm-dash" class="admin-panel-box">
-                <div style="display:flex; gap:12px; margin-bottom:15px;">
-                    <div style="flex:1; background:#0f172a; padding:12px; border-radius:6px; border-left:3px solid #818cf8;">
-                        <div style="font-size:10px; color:#94a3b8;">TOTAL PRODUK</div>
-                        <div id="stat-prod" style="font-size:18px; font-weight:bold;">0</div>
-                    </div>
-                    <div style="flex:1; background:#0f172a; padding:12px; border-radius:6px; border-left:3px solid #10b981;">
-                        <div style="font-size:10px; color:#94a3b8;">TOTAL PENDAPATAN</div>
-                        <div id="stat-rev" style="font-size:18px; font-weight:bold;">Rp 0</div>
-                    </div>
-                </div>
-                <div class="admin-title">Grafik Performa Penjualan</div>
-                <div style="height:180px;"><canvas id="chartAdmin"></canvas></div>
-            </div>
-
-            <div id="adm-prod" class="admin-panel-box" style="display:none;">
-                <div class="admin-title">Inventaris Barang Toko</div>
-                <table>
-                    <thead><tr><th>Nama & Keterangan</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
-                    <tbody id="admin-table-prod"></tbody>
-                </table>
-            </div>
-
-            <div id="adm-ord" class="admin-panel-box" style="display:none;">
-                <div class="admin-title">Manajemen Pesanan Masuk</div>
-                <table>
-                    <thead><tr><th>ID / Waktu</th><th>Pembeli</th><th>Barang</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
-                    <tbody id="admin-table-ord"></tbody>
-                </table>
-            </div>
-
-            <div id="adm-add" class="admin-panel-box" style="display:none; max-width:400px; margin:0 auto;">
-                <div class="admin-title">Form Tambah Produk Baru</div>
-                <form onsubmit="simpanProdukBaru(event)">
-                    <div class="form-row"><label>Nama Produk</label><input type="text" id="in-name" required placeholder="Contoh: Wireless Earbuds"></div>
-                    <div class="form-row"><label>Harga (Rp)</label><input type="number" id="in-price" required placeholder="250000"></div>
-                    <div class="form-row"><label>Deskripsi Singkat</label><textarea id="in-desc" required style="height:50px; resize:none;" placeholder="Spesifikasi barang..."></textarea></div>
-                    
-                    <div class="form-row">
-                        <label>Metode Input Media</label>
-                        <select id="in-method" onchange="ubahMetodeInput()" required>
-                            <option value="link">Gunakan Link URL (Bisa > 1, Pisah Enter)</option>
-                            <option value="gallery">Upload dari Galeri HP (Bisa > 1)</option>
-                        </select>
-                    </div>
-
-                    <div id="box-link">
-                        <div class="form-row"><label>URL Foto</label><textarea id="in-img-url" style="height:45px; resize:none;" placeholder="https://..."></textarea></div>
-                        <div class="form-row"><label>URL Video (Opsional)</label><textarea id="in-vid-url" style="height:45px; resize:none;" placeholder="https://..."></textarea></div>
-                    </div>
-
-                    <div id="box-gallery" style="display:none;">
-                        <div class="form-row"><label>Pilih File Foto (Bisa Banyak)</label><input type="file" id="in-img-file" accept="image/*" multiple></div>
-                        <div class="form-row"><label>Pilih File Video (Bisa Banyak)</label><input type="file" id="in-vid-file" accept="video/*" multiple></div>
-                    </div>
-
-                    <div class="form-row"><label>Stok Awal</label><input type="number" id="in-stock" required placeholder="15"></div>
-                    <button type="submit" class="btn-submit">Simpan ke Katalog</button>
-                </form>
-            </div>
-        </div>
+    <div class="container">
+        <div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:15px; border-left:3px solid #3b82f6; padding-left:8px; color:#93c5fd;">Katalog Produk</div>
+        <div class="product-grid" id="customer-grid"></div>
     </div>
 
     <div class="modal-bg" id="modal-cart">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <h3 style="font-size:12px; font-weight:bold;">Tas Belanja & Checkout</h3>
+                <h3 style="font-size:12px; font-weight:bold; color:#93c5fd;">Tas Belanja</h3>
                 <button onclick="tutupModal()" style="background:none; border:none; font-size:16px; color:#fff; cursor:pointer;">&times;</button>
             </div>
-            <div id="cart-items-box" style="max-height:120px; overflow-y:auto; margin-bottom:12px; border-bottom:1px solid #334155; padding-bottom:6px;"></div>
+            <div id="cart-items-box" style="max-height:120px; overflow-y:auto; margin-bottom:12px; border-bottom:1px solid #3b82f6; padding-bottom:6px;"></div>
             <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:12px;">
-                <span>Total Bayar:</span> <span id="cart-total-val" style="color:#818cf8;">Rp 0</span>
+                <span>Total:</span> <span id="cart-total-val" style="color:#93c5fd;">Rp 0</span>
             </div>
             <form onsubmit="prosesCheckout(event)">
                 <div class="form-row"><label>Nama Penerima</label><input type="text" id="co-name" required></div>
                 <div class="form-row"><label>No WhatsApp</label><input type="tel" id="co-phone" required></div>
-                <div class="form-row"><label>Alamat Lengkap</label><textarea id="co-address" required style="height:45px; resize:none;"></textarea></div>
+                <div class="form-row"><label>Alamat</label><textarea id="co-address" required style="height:40px; resize:none;"></textarea></div>
                 <div class="form-row">
-                    <label>Metode Pembayaran</label>
+                    <label>Pembayaran</label>
                     <select id="co-payment" required>
-                        <option value="">-- Pilih Pembayaran --</option>
                         <option value="Transfer Bank">Transfer Bank</option>
-                        <option value="E-Wallet">E-Wallet</option>
                         <option value="COD">COD</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-submit">Kirim Pesanan</button>
+                <button type="submit" class="btn-submit">Checkout Pesanan</button>
             </form>
         </div>
     </div>
 
     <script>
         const DEFAULT_PROD = [
-            { id: 1, name: "Smartwatch Sport Edition", price: 450000, desc: "Waterproof & Heart Rate Monitor", stock: 10, imgs: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"], videos: [] }
+            { id: 1, name: "Mouse Gaming RGB", price: 150000, desc: "Mouse gaming presisi tinggi", stock: 15, imgs: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80"] },
+            { id: 2, name: "Keyboard Mechanical", price: 350000, desc: "Switch blue tactile", stock: 10, imgs: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"] }
         ];
 
         function getProducts() {
             let data = localStorage.getItem('ucen_products');
             if(!data) { localStorage.setItem('ucen_products', JSON.stringify(DEFAULT_PROD)); return DEFAULT_PROD; }
-            return JSON.parse(data).map(p => ({ ...p, imgs: p.imgs || [p.img], videos: p.videos || [] }));
+            return JSON.parse(data);
         }
         function getCart() { return JSON.parse(localStorage.getItem('ucen_cart')) || []; }
-        function getOrders() { return JSON.parse(localStorage.getItem('ucen_orders')) || []; }
 
         window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let mode = urlParams.get('mode') || 'customer';
-            switchMode(mode);
+            renderCustProducts();
+            updateBadge();
         };
 
-        function switchMode(mode) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            if(mode === 'admin') {
-                document.getElementById('view-admin').classList.add('active');
-                loadAdminStats();
-            } else {
-                document.getElementById('view-customer').classList.add('active');
-                renderCustProducts();
-                updateBadge();
-            }
-        }
-
-        // CUSTOMER FUNCTIONS
         function renderCustProducts() {
             let products = getProducts();
             let grid = document.getElementById('customer-grid');
             grid.innerHTML = "";
             products.forEach(p => {
-                let displayImg = p.imgs?.[0] || '';
+                let img = p.imgs?.[0] || p.img || '';
                 grid.innerHTML += `
                     <div class="product-card">
                         <div>
-                            <div class="media-box"><img src="${displayImg}"></div>
-                            <div style="font-size:12px; font-weight:bold; margin-bottom:2px;">${p.name}</div>
-                            <div style="font-size:13px; font-weight:bold; color:#818cf8; margin-bottom:4px;">Rp ${p.price.toLocaleString('id-ID')}</div>
-                            <div style="font-size:10px; color:#94a3b8; margin-bottom:4px;">${p.desc}</div>
-                            <div style="font-size:9px; color:#64748b; margin-bottom:8px;">Stok: ${p.stock}</div>
+                            <div class="media-box"><img src="${img}"></div>
+                            <div style="font-size:12px; font-weight:bold; margin-bottom:2px; color:#f8fafc;">${p.name}</div>
+                            <div style="font-size:13px; font-weight:bold; color:#60a5fa; margin-bottom:4px;">Rp ${p.price.toLocaleString('id-ID')}</div>
+                            <div style="font-size:10px; color:#94a3b8; margin-bottom:8px;">${p.desc}</div>
                         </div>
-                        <div style="display:flex; gap:6px;">
-                            <button onclick="tambahKeTas(${p.id})" style="flex:1; background:#334155; color:#fff; border:none; padding:6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">+ Tas</button>
-                            <button onclick="tambahKeTas(${p.id}); bukaKeranjang();" style="flex:1; background:#6366f1; color:#fff; border:none; padding:6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">Beli</button>
-                        </div>
+                        <button onclick="tambahKeTas(${p.id})" style="background:#2563eb; color:#fff; border:none; padding:6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">+ Beli</button>
                     </div>
                 `;
             });
@@ -232,205 +112,46 @@
                 cart.push({ id: p.id, name: p.name, price: p.price });
                 localStorage.setItem('ucen_cart', JSON.stringify(cart));
                 updateBadge();
-                alert("Produk dimasukkan ke tas!");
-            } else { alert("Stok barang habis!"); }
+                alert("Berhasil dimasukkan ke tas!");
+            } else { alert("Stok habis!"); }
         }
 
         function updateBadge() { document.getElementById('count-badge').innerText = getCart().length; }
-
+        
         function bukaKeranjang() {
             let cart = getCart();
             let box = document.getElementById('cart-items-box');
             box.innerHTML = "";
             let total = 0;
-            if(cart.length === 0) box.innerHTML = "<p style='font-size:10px; color:#94a3b8;'>Tas belanja kosong.</p>";
+            if(cart.length === 0) box.innerHTML = "<p style='font-size:10px; color:#94a3b8;'>Tas kosong.</p>";
             else {
                 cart.forEach((i, idx) => {
                     total += i.price;
-                    box.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:6px;">
-                            <span><b>${i.name}</b></span>
-                            <span>Rp ${i.price.toLocaleString('id-ID')} <button onclick="hapusItemTas(${idx})" style="background:#ef4444; color:#fff; border:none; padding:1px 4px; cursor:pointer;">x</button></span>
-                        </div>
-                    `;
+                    box.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; color:#f8fafc;"><span>${i.name}</span><span>Rp ${i.price.toLocaleString('id-ID')}</span></div>`;
                 });
             }
             document.getElementById('cart-total-val').innerText = "Rp " + total.toLocaleString('id-ID');
             document.getElementById('modal-cart').style.display = 'flex';
         }
-
-        function hapusItemTas(idx) {
-            let c = getCart(); c.splice(idx, 1);
-            localStorage.setItem('ucen_cart', JSON.stringify(c));
-            bukaKeranjang(); updateBadge();
-        }
-
+        
         function tutupModal() { document.getElementById('modal-cart').style.display = 'none'; }
-
+        
         function prosesCheckout(e) {
             e.preventDefault();
             let cart = getCart();
             if(cart.length === 0) return;
-            let name = document.getElementById('co-name').value;
-            let phone = document.getElementById('co-phone').value;
-            let address = document.getElementById('co-address').value;
-            let payment = document.getElementById('co-payment').value;
-
-            let products = getProducts();
-            let total = 0;
-            cart.forEach(i => {
-                total += i.price;
-                let pr = products.find(x => x.id === i.id);
-                if(pr && pr.stock > 0) pr.stock -= 1;
-            });
-            localStorage.setItem('ucen_products', JSON.stringify(products));
-
-            let orders = getOrders();
+            let orders = JSON.parse(localStorage.getItem('ucen_orders')) || [];
+            let total = cart.reduce((a,b)=>a+b.price, 0);
             orders.unshift({
                 orderId: 'UCEN-' + Math.floor(10000 + Math.random()*90000),
                 date: new Date().toLocaleString('id-ID'),
-                buyer: { name, phone, address, payment },
+                buyer: { name: document.getElementById('co-name').value, phone: document.getElementById('co-phone').value },
                 items: cart, total, status: 'Pending'
             });
             localStorage.setItem('ucen_orders', JSON.stringify(orders));
             localStorage.setItem('ucen_cart', JSON.stringify([]));
             updateBadge(); tutupModal();
-            alert("Pesanan berhasil dikirim!");
-            renderCustProducts();
-        }
-
-        // ADMIN FUNCTIONS
-        function pilihTabAdmin(tab, e) {
-            ['dash', 'prod', 'ord', 'add'].forEach(x => document.getElementById('adm-'+x).style.display = 'none');
-            document.getElementById('adm-'+tab).style.display = 'block';
-            if(tab === 'dash') loadAdminStats();
-            if(tab === 'prod') renderAdminProducts();
-            if(tab === 'ord') renderAdminOrders();
-        }
-
-        function loadAdminStats() {
-            let products = getProducts();
-            let orders = getOrders();
-            document.getElementById('stat-prod').innerText = products.length;
-            let rev = orders.reduce((a,b)=>a+b.total,0);
-            document.getElementById('stat-rev').innerText = "Rp " + rev.toLocaleString('id-ID');
-        }
-
-        function ubahMetodeInput() {
-            let m = document.getElementById('in-method').value;
-            document.getElementById('box-link').style.display = m === 'link' ? 'block' : 'none';
-            document.getElementById('box-gallery').style.display = m === 'gallery' ? 'block' : 'none';
-        }
-
-        function simpanProdukBaru(e) {
-            e.preventDefault();
-            let name = document.getElementById('in-name').value;
-            let price = parseInt(document.getElementById('in-price').value);
-            let desc = document.getElementById('in-desc').value;
-            let stock = parseInt(document.getElementById('in-stock').value);
-            let method = document.getElementById('in-method').value;
-
-            if(method === 'link') {
-                let imgs = document.getElementById('in-img-url').value.split('\n').map(s=>s.trim()).filter(Boolean);
-                let videos = document.getElementById('in-vid-url').value.split('\n').map(s=>s.trim()).filter(Boolean);
-                simpanKeStorage(name, price, desc, imgs, videos, stock);
-            } else {
-                let imgFiles = document.getElementById('in-img-file').files;
-                let vidFiles = document.getElementById('in-vid-file').files;
-                bacaFileBase64(imgFiles, vidFiles, (imgs, videos) => {
-                    simpanKeStorage(name, price, desc, imgs, videos, stock);
-                });
-            }
-        }
-
-        function bacaFileBase64(imgFiles, vidFiles, cb) {
-            let imgs = []; let videos = []; let total = imgFiles.length + vidFiles.length;
-            if(total === 0) { cb([], []); return; }
-            let loaded = 0;
-            function check() { loaded++; if(loaded === total) cb(imgs, videos); }
-            for(let f of imgFiles) {
-                let r = new FileReader(); r.onload = e => { imgs.push(e.target.result); check(); }; r.readAsDataURL(f);
-            }
-            for(let f of vidFiles) {
-                let r = new FileReader(); r.onload = e => { videos.push(e.target.result); check(); }; r.readAsDataURL(f);
-            }
-        }
-
-        function simpanKeStorage(name, price, desc, imgs, videos, stock) {
-            let products = getProducts();
-            products.push({ id: Date.now(), name, price, desc, imgs, videos, stock });
-            localStorage.setItem('ucen_products', JSON.stringify(products));
-            alert("Produk berhasil ditambahkan!");
-            document.getElementById('in-name').value = '';
-            document.getElementById('in-price').value = '';
-            document.getElementById('in-desc').value = '';
-            document.getElementById('in-stock').value = '';
-            pilihTabAdmin('prod');
-        }
-
-        function renderAdminProducts() {
-            let products = getProducts();
-            let tb = document.getElementById('admin-table-prod');
-            tb.innerHTML = "";
-            if(products.length === 0) { tb.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Kosong</td></tr>"; return; }
-            products.forEach((p, idx) => {
-                tb.innerHTML += `
-                    <tr>
-                        <td><b>${p.name}</b><br><span style="color:#94a3b8;">${p.desc}</span></td>
-                        <td>Rp ${p.price.toLocaleString('id-ID')}</td>
-                        <td><b>${p.stock}</b></td>
-                        <td><button onclick="hapusProduk(${idx})" style="background:#ef4444; color:#fff; border:none; padding:3px 6px; cursor:pointer; border-radius:4px; font-size:10px;">Hapus</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function hapusProduk(idx) {
-            if(confirm("Yakin ingin menghapus produk ini?")) {
-                let products = getProducts();
-                products.splice(idx, 1);
-                localStorage.setItem('ucen_products', JSON.stringify(products));
-                renderAdminProducts();
-            }
-        }
-
-        function renderAdminOrders() {
-            let orders = getOrders();
-            let tb = document.getElementById('admin-table-ord');
-            tb.innerHTML = "";
-            if(orders.length === 0) { tb.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Belum ada pesanan</td></tr>"; return; }
-            orders.forEach(o => {
-                let listItems = o.items.map(i => `• ${i.name}`).join("<br>");
-                tb.innerHTML += `
-                    <tr>
-                        <td><b>${o.orderId}</b><br><span style="font-size:9px; color:#94a3b8;">${o.date}</span></td>
-                        <td><b>${o.buyer.name}</b> (${o.buyer.phone})</td>
-                        <td>${listItems}</td>
-                        <td><b>Rp ${o.total.toLocaleString('id-ID')}</b></td>
-                        <td>${o.status}</td>
-                        <td>
-                            <select id="st-${o.orderId}" style="font-size:10px; padding:2px; margin-bottom:4px;">
-                                <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
-                                <option value="Sedang Dikirim" ${o.status==='Sedang Dikirim'?'selected':''}>Sedang Dikirim</option>
-                                <option value="Selesai" ${o.status==='Selesai'?'selected':''}>Selesai</option>
-                            </select>
-                            <button onclick="updateStatusPesanan('${o.orderId}')" style="background:#10b981; color:#fff; border:none; padding:2px; width:100%; cursor:pointer; border-radius:3px; font-size:9px;">Simpan</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function updateStatusPesanan(id) {
-            let val = document.getElementById(`st-${id}`).value;
-            let orders = getOrders();
-            let target = orders.find(x => x.orderId === id);
-            if(target) {
-                target.status = val;
-                localStorage.setItem('ucen_orders', JSON.stringify(orders));
-                renderAdminOrders();
-                alert("Status pesanan diperbarui!");
-            }
+            alert("Checkout Berhasil!");
         }
     </script>
 </body>
