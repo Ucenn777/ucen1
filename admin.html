@@ -3,287 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GadgetStore Pro - Admin Area</title>
+    <title>GadgetStore Pro - Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { width: 100%; min-height: 100vh; background-color: #f3f4f6; color: #222; }
-        #view-admin-panel { display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 240px; background: #1e293b; color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; }
-        .sidebar h2 { font-size: 13px; color: #60a5fa; margin-bottom: 3px; }
-        .sidebar p { font-size: 10px; color: #94a3b8; margin-bottom: 20px; }
-        .sidebar-links { list-style: none; display: flex; flex-direction: column; gap: 5px; }
-        .sidebar-links a { color: #cbd5e1; text-decoration: none; font-size: 11px; padding: 8px 10px; border-radius: 5px; display: block; cursor: pointer; font-weight: 500; }
-        .sidebar-links a:hover, .sidebar-links a.active { background: #2563eb; color: #fff; }
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 20px; }
-        .admin-topbar { background: #fff; padding: 12px 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .admin-card { background: #fff; border-radius: 6px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .admin-card-title { font-size: 12px; font-weight: bold; color: #374151; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
-        th, td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
-        th { background: #f9fafb; color: #4b5563; font-weight: bold; text-transform: uppercase; }
-        .form-group { margin-bottom: 10px; text-align: left; }
-        .form-group label { display: block; font-size: 10px; font-weight: bold; margin-bottom: 3px; color: #4b5563; text-transform: uppercase; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 7px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 11px; outline: none; }
-        .form-group textarea { height: 60px; resize: vertical; }
-        .btn-submit-db { background: #2563eb; color: #fff; border: none; padding: 8px; border-radius: 5px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; }
-        .btn-action-nav { background: #fff; color: #2563eb; border: 1px solid #d1d5db; padding: 7px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; text-decoration: none; }
-        @media(max-width: 600px) {
-            #view-admin-panel { flex-direction: column; height: auto; overflow: auto; }
-            .sidebar { width: 100%; height: auto; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; }
+        header { background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .adm-logo { font-size: 13px; font-weight: bold; color: #38bdf8; text-transform: uppercase; }
+        .adm-nav { display: flex; gap: 6px; }
+        .adm-link { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: 600; text-decoration: none; }
+        .adm-link.active, .adm-link:hover { background: #0284c7; color: #fff; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+        .card-box { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .card-head { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #38bdf8; margin-bottom: 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: left; }
+        th, td { padding: 8px; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #94a3b8; }
+        .f-group { margin-bottom: 8px; }
+        .f-group label { display: block; font-size: 9px; font-weight: bold; margin-bottom: 2px; color: #94a3b8; text-transform: uppercase; }
+        .f-group input, .f-group textarea, .f-group select { width: 100%; background: #0f172a; border: 1px solid #475569; color: #fff; padding: 6px; border-radius: 4px; font-size: 10px; outline: none; }
+        .btn-save { background: #0284c7; color: #fff; border: none; padding: 8px; width: 100%; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div id="view-admin-panel">
-        <div class="sidebar">
-            <div>
-                <h2>GadgetStore Pro</h2>
-                <p>Admin Control Panel</p>
-                <ul class="sidebar-links">
-                    <li><a onclick="switchTab('dashboard', event)" class="active" id="nav-dash">📊 Dashboard & Statistik</a></li>
-                    <li><a onclick="switchTab('products', event)" id="nav-prod">📦 Kelola Inventaris & Media</a></li>
-                    <li><a onclick="switchTab('orders', event)" id="nav-ord">🛍️ Cek Status Pesanan</a></li>
-                    <li><a onclick="switchTab('add', event)" id="nav-add">➕ Input Produk Baru</a></li>
-                </ul>
-            </div>
-            <div>
-                <a href="index.html" style="color:#ef4444; background:rgba(239,68,68,0.1); padding:8px; border-radius:5px; text-align:center; display:block; text-decoration:none; font-weight:bold; font-size:11px;">🚪 Logout / Ganti Peran</a>
-            </div>
+    <header>
+        <div class="adm-logo">Admin Panel Store</div>
+        <div class="adm-nav">
+            <button class="adm-link active" onclick="gantiTab('dash', event)">Statistik</button>
+            <button class="adm-link" onclick="gantiTab('prod', event)">Inventaris</button>
+            <button class="adm-link" onclick="gantiTab('ord', event)">Pesanan</button>
+            <button class="adm-link" onclick="gantiTab('add', event)">+ Produk</button>
+            <a href="index.html" class="adm-link" style="background:#b91c1c; color:#fff;">Logout</a>
         </div>
-        <div class="main-content">
-            <div class="admin-topbar">
-                <h1 id="admin-page-title" style="font-size: 13px; text-transform: uppercase;">Dashboard Utama</h1>
-                <a href="customer.html" target="_blank" class="btn-action-nav">🔗 Buka Tampilan Customer</a>
-            </div>
+    </header>
 
-            <div id="tab-dashboard" class="admin-card">
-                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                    <div style="flex:1; background:#f8fafc; padding:12px; border-radius:5px; border-left:3px solid #2563eb;">
-                        <div style="font-size:10px; color:#6b7280; font-weight:bold;">TOTAL PRODUK</div>
-                        <div id="stat-prod" style="font-size:18px; font-weight:bold;">0</div>
-                    </div>
-                    <div style="flex:1; background:#f8fafc; padding:12px; border-radius:5px; border-left:3px solid #10b981;">
-                        <div style="font-size:10px; color:#6b7280; font-weight:bold;">TOTAL PENDAPATAN</div>
-                        <div id="stat-rev" style="font-size:18px; font-weight:bold;">Rp 0</div>
-                    </div>
+    <div class="container">
+        <div id="tab-dash" class="card-box">
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <div style="flex:1; background:#0f172a; padding:10px; border-radius:4px; border-left:3px solid #38bdf8;">
+                    <div style="font-size:9px; color:#94a3b8;">TOTAL PRODUK</div>
+                    <div id="st-p" style="font-size:16px; font-weight:bold;">0</div>
                 </div>
-                <div class="admin-card-title">Grafik Analisis Penjualan</div>
-                <div style="height:200px;"><canvas id="adminChart"></canvas></div>
+                <div style="flex:1; background:#0f172a; padding:10px; border-radius:4px; border-left:3px solid #10b981;">
+                    <div style="font-size:9px; color:#94a3b8;">TOTAL PENDAPATAN</div>
+                    <div id="st-r" style="font-size:16px; font-weight:bold;">Rp 0</div>
+                </div>
             </div>
+            <div class="card-head">Grafik Kinerja Penjualan</div>
+            <div style="height:180px;"><canvas id="myChart"></canvas></div>
+        </div>
 
-            <div id="tab-products" class="admin-card" style="display:none;">
-                <div class="admin-card-title">Database Inventaris Barang</div>
-                <table>
-                    <thead>
-                        <tr><th>Media Foto/Video</th><th>Nama & Spesifikasi</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr>
-                    </thead>
-                    <tbody id="admin-product-table"></tbody>
-                </table>
-            </div>
+        <div id="tab-prod" class="card-box" style="display:none;">
+            <div class="card-head">Daftar Barang Tersimpan</div>
+            <table>
+                <thead><tr><th>Media</th><th>Nama & Info</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+                <tbody id="tbl-prod"></tbody>
+            </table>
+        </div>
 
-            <div id="tab-orders" class="admin-card" style="display:none;">
-                <div class="admin-card-title">Manajemen Status Pesanan Customer</div>
-                <table>
-                    <thead>
-                        <tr><th>ID / Waktu</th><th>Kontak Pembeli</th><th>Barang</th><th>Total</th><th>Status Terkini</th><th>Update</th></tr>
-                    </thead>
-                    <tbody id="admin-orders-table"></tbody>
-                </table>
-            </div>
+        <div id="tab-ord" class="card-box" style="display:none;">
+            <div class="card-head">Kelola Status Pesanan Pembeli</div>
+            <table>
+                <thead><tr><th>ID/Waktu</th><th>Pemesan</th><th>Barang</th><th>Total</th><th>Status</th><th>Ubah</th></tr></thead>
+                <tbody id="tbl-ord"></tbody>
+            </table>
+        </div>
 
-            <div id="tab-add" class="admin-card" style="display:none; max-width:450px;">
-                <div class="admin-card-title">Form Input Produk Baru</div>
-                <form onsubmit="saveNewProduct(event)">
-                    <div class="form-group"><label>Nama Produk</label><input type="text" id="in-name" required placeholder="Contoh: Laptop Gaming Ultra"></div>
-                    <div class="form-group"><label>Harga (Rp)</label><input type="number" id="in-price" required placeholder="15000000"></div>
-                    <div class="form-group"><label>Deskripsi & Spesifikasi</label><textarea id="in-desc" required placeholder="RAM 16GB, SSD 512GB..."></textarea></div>
-                    <div class="form-group">
-                        <label>URL Foto Produk (Bisa > 1, Pisahkan dengan Enter / Baris Baru)</label>
-                        <textarea id="in-img" required placeholder="https://images.unsplash.com/...&#10;https://images.unsplash.com/..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>URL Video Demo (Bisa > 1, Pisahkan dengan Enter / Baris Baru)</label>
-                        <textarea id="in-video" required placeholder="https://www.w3schools.com/html/mov_bbb.mp4"></textarea>
-                    </div>
-                    <div class="form-group"><label>Stok Awal</label><input type="number" id="in-stock" required placeholder="10"></div>
-                    <button type="submit" class="btn-submit-db">Simpan Produk ke Database</button>
-                </form>
-            </div>
+        <div id="tab-add" class="card-box" style="display:none; max-width:400px; margin: 0 auto;">
+            <div class="card-head">Form Input Produk Baru</div>
+            <form onsubmit="simpanProdukBaru(event)">
+                <div class="f-group"><label>Nama Produk</label><input type="text" id="i-name" required placeholder="Contoh: Laptop Pro"></div>
+                <div class="f-group"><label>Harga (Rp)</label><input type="number" id="i-price" required placeholder="10000000"></div>
+                <div class="f-group"><label>Deskripsi Detail</label><textarea id="i-desc" required style="height:45px; resize:none;" placeholder="Spesifikasi..."></textarea></div>
+                <div class="f-group"><label>URL Foto (Pisahkan dengan Enter)</label><textarea id="i-img" required style="height:45px; resize:none;" placeholder="https://..."></textarea></div>
+                <div class="f-group"><label>URL Video (Pisahkan dengan Enter)</label><textarea id="i-vid" required style="height:45px; resize:none;" placeholder="https://..."></textarea></div>
+                <div class="f-group"><label>Stok Awal</label><input type="number" id="i-stock" required placeholder="5"></div>
+                <button type="submit" class="btn-save">Simpan Produk ke Database</button>
+            </form>
         </div>
     </div>
 
     <script>
-        const DEFAULT_PRODS = [
-            { 
-                id: 1, 
-                name: "Smartphone Ultra 120Hz", 
-                price: 12000000, 
-                desc: "Layar AMOLED 120Hz, RAM 12GB, Baterai 5000mAh", 
-                stock: 10, 
-                imgs: ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80"], 
-                videos: ["https://www.w3schools.com/html/mov_bbb.mp4"] 
-            }
+        const DEF = [
+            { id: 1, name: "Smartphone Ultra 120Hz", price: 12000000, desc: "Layar AMOLED 120Hz", stock: 10, imgs: ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80"], videos: ["https://www.w3schools.com/html/mov_bbb.mp4"] }
         ];
 
-        let chartInstance = null;
-
-        function getProducts() {
-            let data = localStorage.getItem('gs_products');
-            if(!data) { 
-                // Konversi format lama jika ada
-                localStorage.setItem('gs_products', JSON.stringify(DEFAULT_PRODS)); 
-                return DEFAULT_PRODS; 
-            }
-            let parsed = JSON.parse(data);
-            // Pastikan kompatibel dengan format array multi-file
-            return parsed.map(p => ({
-                ...p,
-                imgs: p.imgs || (p.img ? [p.img] : []),
-                videos: p.videos || (p.video ? [p.video] : [])
-            }));
+        function ambilProduk() {
+            let d = localStorage.getItem('gs_products');
+            if(!d) { localStorage.setItem('gs_products', JSON.stringify(DEF)); return DEF; }
+            return JSON.parse(d).map(p => ({ ...p, imgs: p.imgs || [p.img], videos: p.videos || [p.video] }));
         }
-        function saveProducts(p) { localStorage.setItem('gs_products', JSON.stringify(p)); }
-        function getOrders() { return JSON.parse(localStorage.getItem('gs_orders')) || []; }
-        function saveOrders(o) { localStorage.setItem('gs_orders', JSON.stringify(o)); }
+        function ambilOrder() { return JSON.parse(localStorage.getItem('gs_orders')) || []; }
 
-        window.addEventListener('load', () => {
-            renderAdminData();
-            initChart();
-        });
+        window.onload = () => { muatStatistik(); initChart(); }
 
-        function switchTab(tab, event) {
-            document.querySelectorAll('.admin-card').forEach(c => c.style.display = 'none');
-            document.querySelectorAll('.sidebar-links a').forEach(a => a.classList.remove('active'));
-            if(tab === 'dashboard') {
-                document.getElementById('tab-dashboard').style.display = 'block';
-                document.getElementById('admin-page-title').innerText = 'Dashboard Utama';
-                renderAdminData();
-            } else if(tab === 'products') {
-                document.getElementById('tab-products').style.display = 'block';
-                document.getElementById('admin-page-title').innerText = 'Kelola Inventaris Produk';
-                renderAdminProductsTable();
-            } else if(tab === 'orders') {
-                document.getElementById('tab-orders').style.display = 'block';
-                document.getElementById('admin-page-title').innerText = 'Manajemen Status Pesanan';
-                renderAdminOrdersTable();
-            } else if(tab === 'add') {
-                document.getElementById('tab-add').style.display = 'block';
-                document.getElementById('admin-page-title').innerText = 'Input Produk Baru';
-            }
-            if(event) event.target.classList.add('active');
+        function gantiTab(t, e) {
+            document.querySelectorAll('.card-box').forEach(b => b.style.display = 'none');
+            document.querySelectorAll('.adm-link').forEach(l => l.classList.remove('active'));
+            if(t === 'dash') { document.getElementById('tab-dash').style.display = 'block'; muatStatistik(); }
+            else if(t === 'prod') { document.getElementById('tab-prod').style.display = 'block'; muatTabelProduk(); }
+            else if(t === 'ord') { document.getElementById('tab-ord').style.display = 'block'; muatTabelOrder(); }
+            else if(t === 'add') { document.getElementById('tab-add').style.display = 'block'; }
+            if(e) e.target.classList.add('active');
         }
 
-        function renderAdminData() {
-            let prods = getProducts();
-            let orders = getOrders();
-            document.getElementById('stat-prod').innerText = prods.length;
-            let rev = orders.reduce((sum, o) => sum + o.total, 0);
-            document.getElementById('stat-rev').innerText = "Rp " + rev.toLocaleString('id-ID');
+        function muatStatistik() {
+            let prods = ambilProduk();
+            let ords = ambilOrder();
+            document.getElementById('st-p').innerText = prods.length;
+            let rev = ords.reduce((a, b) => a + b.total, 0);
+            document.getElementById('st-r').innerText = "Rp " + rev.toLocaleString('id-ID');
         }
 
         function initChart() {
-            const ctx = document.getElementById('adminChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
-                    datasets: [{ data: [12, 19, 15, 25, 32, 40, 38], backgroundColor: '#2563eb', borderRadius: 4 }]
+                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                    datasets: [{ data: [5, 12, 8, 15, 20, 25, 22], backgroundColor: '#38bdf8', borderRadius: 3 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
-        function renderAdminProductsTable() {
-            let prods = getProducts();
-            let tbody = document.getElementById('admin-product-table');
-            tbody.innerHTML = "";
-            if(prods.length === 0) { tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Belum ada produk.</td></tr>"; return; }
+        function muatTabelProduk() {
+            let prods = ambilProduk();
+            let tb = document.getElementById('tbl-prod');
+            tb.innerHTML = "";
+            if(prods.length === 0) { tb.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Kosong</td></tr>"; return; }
             prods.forEach((p, idx) => {
-                let firstImg = p.imgs && p.imgs.length > 0 ? p.imgs[0] : '';
-                tbody.innerHTML += `
+                let img = p.imgs && p.imgs.length > 0 ? p.imgs[0] : '';
+                tb.innerHTML += `
                     <tr>
-                        <td><img src="${firstImg}" width="30" height="30" style="object-fit:cover; border-radius:3px;"> (${p.imgs.length} Foto, ${p.videos.length} Video)</td>
-                        <td><b>${p.name}</b><br><span style="color:#666;">${p.desc}</span></td>
+                        <td><img src="${img}" width="25" height="25" style="object-fit:cover; border-radius:2px;"></td>
+                        <td><b>${p.name}</b><br><span style="color:#94a3b8;">${p.desc}</span></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
-                        <td><b>${p.stock} pcs</b></td>
-                        <td><button onclick="deleteProd(${idx})" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;">Hapus</button></td>
+                        <td><b>${p.stock}</b></td>
+                        <td><button onclick="hapusProd(${idx})" style="background:#dc2626; color:#fff; border:none; padding:2px 6px; border-radius:2px; cursor:pointer;">Hapus</button></td>
                     </tr>
                 `;
             });
         }
 
-        function deleteProd(idx) {
-            if(confirm("Hapus produk ini?")) {
-                let prods = getProducts();
-                prods.splice(idx, 1);
-                saveProducts(prods);
-                renderAdminProductsTable();
-                renderAdminData();
+        function hapusProd(idx) {
+            if(confirm("Hapus?")) {
+                let p = ambilProduk();
+                p.splice(idx, 1);
+                localStorage.setItem('gs_products', JSON.stringify(p));
+                muatTabelProduk();
             }
         }
 
-        function saveNewProduct(e) {
+        function simpanProdukBaru(e) {
             e.preventDefault();
-            let name = document.getElementById('in-name').value;
-            let price = parseInt(document.getElementById('in-price').value);
-            let desc = document.getElementById('in-desc').value;
-            
-            // Ambil teks dari textarea dan ubah menjadi array (dipisahkan baris baru/enter)
-            let rawImgs = document.getElementById('in-img').value;
-            let imgs = rawImgs.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            let name = document.getElementById('i-name').value;
+            let price = parseInt(document.getElementById('i-price').value);
+            let desc = document.getElementById('i-desc').value;
+            let imgs = document.getElementById('i-img').value.split('\n').map(s => s.trim()).filter(Boolean);
+            let videos = document.getElementById('i-vid').value.split('\n').map(s => s.trim()).filter(Boolean);
+            let stock = parseInt(document.getElementById('i-stock').value);
 
-            let rawVideos = document.getElementById('in-video').value;
-            let videos = rawVideos.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-
-            let stock = parseInt(document.getElementById('in-stock').value);
-
-            let prods = getProducts();
-            prods.push({ id: Date.now(), name, price, desc, imgs, videos, stock });
-            saveProducts(prods);
-            alert("Produk dengan banyak foto & video berhasil disimpan!");
+            let p = ambilProduk();
+            p.push({ id: Date.now(), name, price, desc, imgs, videos, stock });
+            localStorage.setItem('gs_products', JSON.stringify(p));
+            alert("Tersimpan!");
             e.target.reset();
-            switchTab('products');
+            gantiTab('prod');
         }
 
-        function renderAdminOrdersTable() {
-            let orders = getOrders();
-            let tbody = document.getElementById('admin-orders-table');
-            tbody.innerHTML = "";
-            if(orders.length === 0) { tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Belum ada pesanan masuk.</td></tr>"; return; }
-            orders.forEach(ord => {
-                let itemsStr = ord.items.map(i => `• ${i.name}`).join("<br>");
-                let b = ord.buyer;
-                tbody.innerHTML += `
+        function muatTabelOrder() {
+            let ords = ambilOrder();
+            let tb = document.getElementById('tbl-ord');
+            tb.innerHTML = "";
+            if(ords.length === 0) { tb.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Belum ada pesanan</td></tr>"; return; }
+            ords.forEach(o => {
+                let items = o.items.map(i => `• ${i.name}`).join("<br>");
+                tb.innerHTML += `
                     <tr>
-                        <td><b>${ord.orderId}</b><br><span style="color:#666; font-size:9px;">${ord.date}</span></td>
-                        <td><b>${b.name}</b> (${b.phone})<br>${b.address}</td>
-                        <td>${itemsStr}</td>
-                        <td><b>Rp ${ord.total.toLocaleString('id-ID')}</b></td>
-                        <td><span style="background:#dbeafe; color:#1e40af; padding:3px 6px; border-radius:3px; font-weight:bold;">${ord.status}</span></td>
+                        <td><b>${o.orderId}</b><br><span style="font-size:8px; color:#94a3b8;">${o.date}</span></td>
+                        <td><b>${o.buyer.name}</b> (${o.buyer.phone})</td>
+                        <td>${items}</td>
+                        <td><b>Rp ${o.total.toLocaleString('id-ID')}</b></td>
+                        <td><span style="background:#0369a1; padding:2px 4px; border-radius:2px;">${o.status}</span></td>
                         <td>
-                            <select id="sel-${ord.orderId}" style="padding:4px; font-size:10px; margin-bottom:4px;">
-                                <option value="Pesanan Belum Dibayar" ${ord.status==='Pesanan Belum Dibayar'?'selected':''}>Belum Dibayar</option>
-                                <option value="Pesanan Dikemas" ${ord.status==='Pesanan Dikemas'?'selected':''}>Dikemas</option>
-                                <option value="Pesanan Dikirim" ${ord.status==='Pesanan Dikirim'?'selected':''}>Dikirim</option>
-                                <option value="Pesanan Selesai" ${ord.status==='Pesanan Selesai'?'selected':''}>Selesai</option>
+                            <select id="st-${o.orderId}" style="padding:2px; font-size:9px; margin-bottom:2px;">
+                                <option value="Pesanan Belum Dibayar" ${o.status==='Pesanan Belum Dibayar'?'selected':''}>Belum Dibayar</option>
+                                <option value="Pesanan Dikemas" ${o.status==='Pesanan Dikemas'?'selected':''}>Dikemas</option>
+                                <option value="Pesanan Dikirim" ${o.status==='Pesanan Dikirim'?'selected':''}>Dikirim</option>
+                                <option value="Pesanan Selesai" ${o.status==='Pesanan Selesai'?'selected':''}>Selesai</option>
                             </select>
-                            <button onclick="updateStatus('${ord.orderId}')" style="background:#10b981; color:#fff; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; display:block; width:100%;">Simpan</button>
+                            <button onclick="updateSt('${o.orderId}')" style="background:#10b981; color:#fff; border:none; padding:2px; width:100%; border-radius:2px; cursor:pointer;">Update</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function updateStatus(orderId) {
-            let newSt = document.getElementById(`sel-${orderId}`).value;
-            let orders = getOrders();
-            let o = orders.find(x => x.orderId === orderId);
-            if(o) {
-                o.status = newSt;
-                saveOrders(orders);
-                renderAdminOrdersTable();
-                alert("Status pesanan diperbarui!");
+        function updateSt(id) {
+            let val = document.getElementById(`st-${id}`).value;
+            let ords = ambilOrder();
+            let target = ords.find(x => x.orderId === id);
+            if(target) {
+                target.status = val;
+                localStorage.setItem('gs_orders', JSON.stringify(ords));
+                muatTabelOrder();
+                alert("Status diperbarui!");
             }
         }
     </script>
