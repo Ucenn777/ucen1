@@ -4,42 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOKO UCEN JAYA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: #0f172a; color: #f3f4f6; min-height: 100vh; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* NAVBAR */
         nav { background: #1e3a8a; border-bottom: 1px solid #2563eb; padding: 12px 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .brand-logo { font-size: 14px; font-weight: 800; color: #93c5fd; text-transform: uppercase; cursor: pointer; }
+        .nav-actions { display: flex; gap: 8px; align-items: center; }
         .btn-custom { background: #2563eb; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
         .btn-custom:hover { background: #1d4ed8; }
-        .container { max-width: 1100px; margin: 25px auto; padding: 0 20px; }
+
+        .container { max-width: 1000px; margin: 25px auto; padding: 0 20px; }
+
+        /* CUSTOMER AREA */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
         .product-card { background: #1e293b; border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
         .media-box { width: 100%; height: 140px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
         .media-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ADMIN AREA */
+        .admin-box { background: #1e293b; border: 1px solid #3b82f6; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .admin-title { font-size: 14px; font-weight: 700; color: #93c5fd; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #2563eb; padding-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+        th, td { padding: 12px; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #93c5fd; text-transform: uppercase; font-size: 11px; }
         
-        /* Modal */
-        .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-card { background: #1e293b; border: 1px solid #3b82f6; width: 100%; max-width: 400px; border-radius: 10px; padding: 20px; }
-        .form-row { margin-bottom: 10px; text-align: left; }
-        .form-row label { display: block; font-size: 10px; font-weight: bold; color: #93c5fd; text-transform: uppercase; margin-bottom: 3px; }
-        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #3b82f6; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
+        .form-row { margin-bottom: 12px; text-align: left; }
+        .form-row label { display: block; font-size: 11px; font-weight: bold; color: #93c5fd; margin-bottom: 4px; text-transform: uppercase; }
+        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #3b82f6; color: #fff; padding: 8px; border-radius: 6px; font-size: 12px; outline: none; }
         .btn-submit { background: #2563eb; color: #fff; border: none; padding: 9px; width: 100%; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background: #1d4ed8; }
+
+        /* MODAL */
+        .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-card { background: #1e293b; border: 1px solid #3b82f6; width: 100%; max-width: 400px; border-radius: 10px; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="brand-logo">Ucen Jaya • Customer</div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <button class="btn-custom" onclick="bukaKeranjang()">🛒 Tas (<span id="count-badge">0</span>)</button>
-            <a href="admin.html" class="btn-custom" style="background:#3b82f6;">Login Admin</a>
+    <div id="view-customer" class="view-section active">
+        <nav>
+            <div class="brand-logo">Ucen Jaya • Customer</div>
+            <div class="nav-actions">
+                <button class="btn-custom" onclick="bukaKeranjang()">🛒 Tas (<span id="count-badge">0</span>)</button>
+                <button class="btn-custom" onclick="switchMode('admin')" style="background:#3b82f6;">Mode Admin</button>
+            </div>
+        </nav>
+        <div class="container">
+            <div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:15px; border-left:3px solid #3b82f6; padding-left:8px; color:#93c5fd;">Katalog Produk</div>
+            <div class="product-grid" id="customer-grid"></div>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:15px; border-left:3px solid #3b82f6; padding-left:8px; color:#93c5fd;">Katalog Produk</div>
-        <div class="product-grid" id="customer-grid"></div>
+    <div id="view-admin" class="view-section">
+        <nav>
+            <div class="brand-logo">Ucen Jaya • Admin Panel</div>
+            <div class="nav-actions">
+                <button class="btn-custom" onclick="switchMode('customer')" style="background:#2563eb;">Mode Customer</button>
+            </div>
+        </nav>
+        <div class="container">
+            <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+                <button class="btn-custom" onclick="pilihTab('dash')">📊 Statistik</button>
+                <button class="btn-custom" onclick="pilihTab('prod')">📦 Kelola Stok</button>
+                <button class="btn-custom" onclick="pilihTab('ord')">🛍️ Pesanan Masuk</button>
+                <button class="btn-custom" onclick="pilihTab('add')">➕ Tambah Produk</button>
+            </div>
+
+            <div id="tab-dash" class="admin-box">
+                <div class="admin-title">Dashboard Statistik Pendapatan</div>
+                <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <div style="flex:1; background:#0f172a; padding:15px; border-radius:6px; border-left:4px solid #3b82f6; border: 1px solid #3b82f6;">
+                        <div style="font-size:11px; color:#93c5fd; font-weight:bold;">TOTAL PENDAPATAN</div>
+                        <div id="stat-rev" style="font-size:20px; font-weight:bold; color:#60a5fa;">Rp 0</div>
+                    </div>
+                </div>
+                <div style="height:200px;"><canvas id="chartAdmin"></canvas></div>
+            </div>
+
+            <div id="tab-prod" class="admin-box" style="display:none;">
+                <div class="admin-title">Kelola Barang & Stok</div>
+                <table>
+                    <thead><tr><th>Foto</th><th>Nama Barang</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+                    <tbody id="table-prod-body"></tbody>
+                </table>
+            </div>
+
+            <div id="tab-ord" class="admin-box" style="display:none;">
+                <div class="admin-title">Daftar Pesanan Masuk</div>
+                <table>
+                    <thead><tr><th>ID</th><th>Pembeli</th><th>Item</th><th>Total</th><th>Status</th></tr></thead>
+                    <tbody id="table-ord-body"></tbody>
+                </table>
+            </div>
+
+            <div id="tab-add" class="admin-box" style="display:none; max-width:450px;">
+                <div class="admin-title">Tambah Produk Baru</div>
+                <form onsubmit="tambahProdukBaru(event)">
+                    <div class="form-row"><label>Nama Barang</label><input type="text" id="p-name" required></div>
+                    <div class="form-row"><label>Harga (Rp)</label><input type="number" id="p-price" required></div>
+                    <div class="form-row"><label>Deskripsi</label><textarea id="p-desc" style="height:50px; resize:none;" required></textarea></div>
+                    <div class="form-row"><label>URL Foto</label><input type="text" id="p-img" placeholder="https://..." required></div>
+                    <div class="form-row"><label>Stok</label><input type="number" id="p-stock" required></div>
+                    <button type="submit" class="btn-submit">Simpan Produk</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="modal-bg" id="modal-cart">
@@ -80,11 +154,26 @@
             return JSON.parse(data);
         }
         function getCart() { return JSON.parse(localStorage.getItem('ucen_cart')) || []; }
+        function getOrders() { return JSON.parse(localStorage.getItem('ucen_orders')) || []; }
 
         window.onload = function() {
             renderCustProducts();
             updateBadge();
+            loadStats();
+            renderChart();
         };
+
+        function switchMode(mode) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            if(mode === 'admin') {
+                document.getElementById('view-admin').classList.add('active');
+                loadStats();
+            } else {
+                document.getElementById('view-customer').classList.add('active');
+                renderCustProducts();
+                updateBadge();
+            }
+        }
 
         function renderCustProducts() {
             let products = getProducts();
@@ -118,6 +207,7 @@
         }
 
         function updateBadge() { document.getElementById('count-badge').innerText = getCart().length; }
+        
         function bukaKeranjang() {
             let cart = getCart();
             let box = document.getElementById('cart-items-box');
@@ -133,12 +223,14 @@
             document.getElementById('cart-total-val').innerText = "Rp " + total.toLocaleString('id-ID');
             document.getElementById('modal-cart').style.display = 'flex';
         }
+        
         function tutupModal() { document.getElementById('modal-cart').style.display = 'none'; }
+        
         function prosesCheckout(e) {
             e.preventDefault();
             let cart = getCart();
             if(cart.length === 0) return;
-            let orders = JSON.parse(localStorage.getItem('ucen_orders')) || [];
+            let orders = getOrders();
             let total = cart.reduce((a,b)=>a+b.price, 0);
             orders.unshift({
                 orderId: 'UCEN-' + Math.floor(10000 + Math.random()*90000),
@@ -150,6 +242,101 @@
             localStorage.setItem('ucen_cart', JSON.stringify([]));
             updateBadge(); tutupModal();
             alert("Checkout Berhasil!");
+        }
+
+        // ADMIN FUNCTIONS
+        let myChart = null;
+        function pilihTab(tab) {
+            ['dash', 'prod', 'ord', 'add'].forEach(t => document.getElementById('tab-'+t).style.display = 'none');
+            document.getElementById('tab-'+tab).style.display = 'block';
+            if(tab === 'prod') renderProdTable();
+            if(tab === 'ord') renderOrdTable();
+            if(tab === 'dash') renderChart();
+        }
+
+        function loadStats() {
+            let orders = getOrders();
+            let rev = orders.reduce((a,b)=>a+b.total, 0);
+            document.getElementById('stat-rev').innerText = "Rp " + rev.toLocaleString('id-ID');
+        }
+
+        function renderChart() {
+            loadStats();
+            const ctx = document.getElementById('chartAdmin').getContext('2d');
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                    datasets: [{ label: 'Penjualan', data: [12, 19, 3, 5, 2, 20, 15], backgroundColor: '#3b82f6' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderProdTable() {
+            let products = getProducts();
+            let tb = document.getElementById('table-prod-body');
+            tb.innerHTML = "";
+            products.forEach((p, idx) => {
+                let img = p.imgs?.[0] || p.img || '';
+                tb.innerHTML += `
+                    <tr>
+                        <td><img src="${img}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;"></td>
+                        <td><b>${p.name}</b></td>
+                        <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+                        <td><b>${p.stock}</b></td>
+                        <td><button onclick="hapusProd(${idx})" style="background:#dc2626; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function hapusProd(idx) {
+            let products = getProducts();
+            products.splice(idx, 1);
+            localStorage.setItem('ucen_products', JSON.stringify(products));
+            renderProdTable();
+        }
+
+        function renderOrdTable() {
+            let orders = getOrders();
+            let tb = document.getElementById('table-ord-body');
+            tb.innerHTML = "";
+            if(orders.length === 0) { tb.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Belum ada pesanan</td></tr>"; return; }
+            orders.forEach(o => {
+                let items = o.items.map(i => i.name).join(', ');
+                tb.innerHTML += `
+                    <tr>
+                        <td><b>${o.orderId}</b></td>
+                        <td>${o.buyer.name}</td>
+                        <td>${items}</td>
+                        <td><b>Rp ${o.total.toLocaleString('id-ID')}</b></td>
+                        <td>${o.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function tambahProdukBaru(e) {
+            e.preventDefault();
+            let products = getProducts();
+            products.push({
+                id: Date.now(),
+                name: document.getElementById('p-name').value,
+                price: parseInt(document.getElementById('p-price').value),
+                desc: document.getElementById('p-desc').value,
+                imgs: [document.getElementById('p-img').value],
+                stock: parseInt(document.getElementById('p-stock').value)
+            });
+            localStorage.setItem('ucen_products', JSON.stringify(products));
+            alert("Produk berhasil ditambahkan!");
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-desc').value = '';
+            document.getElementById('p-img').value = '';
+            document.getElementById('p-stock').value = '';
+            pilihTab('prod');
         }
     </script>
 </body>
