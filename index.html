@@ -3,36 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Utama - TOKO UCEN JAYA</title>
+    <title>TOKO UCEN JAYA</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: #0b0f19; color: #f3f4f6; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .portal-card { background: #1e293b; border: 1px solid #334155; width: 100%; max-width: 400px; border-radius: 14px; padding: 30px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
-        .portal-btn { display: flex; align-items: center; gap: 14px; background: #0f172a; border: 1px solid #475569; padding: 14px; border-radius: 10px; color: #fff; text-decoration: none; margin-bottom: 12px; text-align: left; cursor: pointer; transition: 0.2s; }
-        .portal-btn:hover { border-color: #6366f1; background: #162032; transform: translateY(-2px); }
+        body { background: #0f172a; color: #f3f4f6; min-height: 100vh; }
+        nav { background: #1e3a8a; border-bottom: 1px solid #2563eb; padding: 12px 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .brand-logo { font-size: 14px; font-weight: 800; color: #93c5fd; text-transform: uppercase; cursor: pointer; }
+        .btn-custom { background: #2563eb; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
+        .btn-custom:hover { background: #1d4ed8; }
+        .container { max-width: 1100px; margin: 25px auto; padding: 0 20px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .product-card { background: #1e293b; border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+        .media-box { width: 100%; height: 140px; background: #000; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+        .media-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Modal */
+        .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-card { background: #1e293b; border: 1px solid #3b82f6; width: 100%; max-width: 400px; border-radius: 10px; padding: 20px; }
+        .form-row { margin-bottom: 10px; text-align: left; }
+        .form-row label { display: block; font-size: 10px; font-weight: bold; color: #93c5fd; text-transform: uppercase; margin-bottom: 3px; }
+        .form-row input, .form-row textarea, .form-row select { width: 100%; background: #0f172a; border: 1px solid #3b82f6; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
+        .btn-submit { background: #2563eb; color: #fff; border: none; padding: 9px; width: 100%; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .btn-submit:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
-    <div class="portal-card">
-        <div style="font-size:35px; margin-bottom:10px;">⚡</div>
-        <h1 style="font-size:16px; font-weight:800; margin-bottom:5px; text-transform:uppercase;">TOKO UCEN JAYA</h1>
-        <p style="font-size:11px; color:#94a3b8; margin-bottom:25px;">Silakan pilih mode akses di bawah ini:</p>
-        
-        <a href="toko.html?mode=customer" class="portal-btn">
-            <span style="font-size:20px;">🛍️</span>
-            <div>
-                <div style="font-size:12px; font-weight:bold;">Akses Customer</div>
-                <div style="font-size:10px; color:#94a3b8;">Belanja produk & checkout pesanan</div>
-            </div>
-        </a>
 
-        <a href="toko.html?mode=admin" class="portal-btn">
-            <span style="font-size:20px;">🛠️</span>
-            <div>
-                <div style="font-size:12px; font-weight:bold;">Akses Admin Dashboard</div>
-                <div style="font-size:10px; color:#94a3b8;">Kelola inventaris, upload media & pesanan</div>
-            </div>
-        </a>
+    <nav>
+        <div class="brand-logo">Ucen Jaya • Customer</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn-custom" onclick="bukaKeranjang()">🛒 Tas (<span id="count-badge">0</span>)</button>
+            <a href="admin.html" class="btn-custom" style="background:#3b82f6;">Login Admin</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:15px; border-left:3px solid #3b82f6; padding-left:8px; color:#93c5fd;">Katalog Produk</div>
+        <div class="product-grid" id="customer-grid"></div>
     </div>
+
+    <div class="modal-bg" id="modal-cart">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="font-size:12px; font-weight:bold; color:#93c5fd;">Tas Belanja</h3>
+                <button onclick="tutupModal()" style="background:none; border:none; font-size:16px; color:#fff; cursor:pointer;">&times;</button>
+            </div>
+            <div id="cart-items-box" style="max-height:120px; overflow-y:auto; margin-bottom:12px; border-bottom:1px solid #3b82f6; padding-bottom:6px;"></div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold; margin-bottom:12px;">
+                <span>Total:</span> <span id="cart-total-val" style="color:#93c5fd;">Rp 0</span>
+            </div>
+            <form onsubmit="prosesCheckout(event)">
+                <div class="form-row"><label>Nama Penerima</label><input type="text" id="co-name" required></div>
+                <div class="form-row"><label>No WhatsApp</label><input type="tel" id="co-phone" required></div>
+                <div class="form-row"><label>Alamat</label><textarea id="co-address" required style="height:40px; resize:none;"></textarea></div>
+                <div class="form-row">
+                    <label>Pembayaran</label>
+                    <select id="co-payment" required>
+                        <option value="Transfer Bank">Transfer Bank</option>
+                        <option value="COD">COD</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Checkout Pesanan</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_PROD = [
+            { id: 1, name: "Mouse Gaming RGB", price: 150000, desc: "Mouse gaming presisi tinggi", stock: 15, imgs: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80"] },
+            { id: 2, name: "Keyboard Mechanical", price: 350000, desc: "Switch blue tactile", stock: 10, imgs: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"] }
+        ];
+
+        function getProducts() {
+            let data = localStorage.getItem('ucen_products');
+            if(!data) { localStorage.setItem('ucen_products', JSON.stringify(DEFAULT_PROD)); return DEFAULT_PROD; }
+            return JSON.parse(data);
+        }
+        function getCart() { return JSON.parse(localStorage.getItem('ucen_cart')) || []; }
+
+        window.onload = function() {
+            renderCustProducts();
+            updateBadge();
+        };
+
+        function renderCustProducts() {
+            let products = getProducts();
+            let grid = document.getElementById('customer-grid');
+            grid.innerHTML = "";
+            products.forEach(p => {
+                let img = p.imgs?.[0] || p.img || '';
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div>
+                            <div class="media-box"><img src="${img}"></div>
+                            <div style="font-size:12px; font-weight:bold; margin-bottom:2px; color:#f8fafc;">${p.name}</div>
+                            <div style="font-size:13px; font-weight:bold; color:#60a5fa; margin-bottom:4px;">Rp ${p.price.toLocaleString('id-ID')}</div>
+                            <div style="font-size:10px; color:#94a3b8; margin-bottom:8px;">${p.desc}</div>
+                        </div>
+                        <button onclick="tambahKeTas(${p.id})" style="background:#2563eb; color:#fff; border:none; padding:6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">+ Beli</button>
+                    </div>
+                `;
+            });
+        }
+
+        function tambahKeTas(id) {
+            let p = getProducts().find(x => x.id === id);
+            if(p && p.stock > 0) {
+                let cart = getCart();
+                cart.push({ id: p.id, name: p.name, price: p.price });
+                localStorage.setItem('ucen_cart', JSON.stringify(cart));
+                updateBadge();
+                alert("Berhasil dimasukkan ke tas!");
+            } else { alert("Stok habis!"); }
+        }
+
+        function updateBadge() { document.getElementById('count-badge').innerText = getCart().length; }
+        function bukaKeranjang() {
+            let cart = getCart();
+            let box = document.getElementById('cart-items-box');
+            box.innerHTML = "";
+            let total = 0;
+            if(cart.length === 0) box.innerHTML = "<p style='font-size:10px; color:#94a3b8;'>Tas kosong.</p>";
+            else {
+                cart.forEach((i, idx) => {
+                    total += i.price;
+                    box.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:4px; color:#f8fafc;"><span>${i.name}</span><span>Rp ${i.price.toLocaleString('id-ID')}</span></div>`;
+                });
+            }
+            document.getElementById('cart-total-val').innerText = "Rp " + total.toLocaleString('id-ID');
+            document.getElementById('modal-cart').style.display = 'flex';
+        }
+        function tutupModal() { document.getElementById('modal-cart').style.display = 'none'; }
+        function prosesCheckout(e) {
+            e.preventDefault();
+            let cart = getCart();
+            if(cart.length === 0) return;
+            let orders = JSON.parse(localStorage.getItem('ucen_orders')) || [];
+            let total = cart.reduce((a,b)=>a+b.price, 0);
+            orders.unshift({
+                orderId: 'UCEN-' + Math.floor(10000 + Math.random()*90000),
+                date: new Date().toLocaleString('id-ID'),
+                buyer: { name: document.getElementById('co-name').value, phone: document.getElementById('co-phone').value },
+                items: cart, total, status: 'Pending'
+            });
+            localStorage.setItem('ucen_orders', JSON.stringify(orders));
+            localStorage.setItem('ucen_cart', JSON.stringify([]));
+            updateBadge(); tutupModal();
+            alert("Checkout Berhasil!");
+        }
+    </script>
 </body>
 </html>
